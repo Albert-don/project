@@ -1,0 +1,20 @@
+version: '3.9.6'  # Specifies the Docker Compose version (v3 in this case)
+
+services:
+  chatbot:
+    image: chatbot  # Replace with the actual image name for your chatbot
+    environment:
+      - ACCESS_TOKEN_TG=6737539617:AAFaI44zwcaS6ehCh4RMJpB1hkBnHuRhj6Y  # Placeholder for Telegram access token (if applicable)
+      - ACCESS_TOKEN_CHATGPT=01f35b8b-ad8b-4448-bed8-59910dc52d53  # Placeholder for ChatGPT access token (if applicable)
+      - PASSWORD_REDIS=comp7940passwordlab8  # Password for Redis connection
+      - PORT_REDIS=6379  # Port on which Redis service is listening
+      - HOST_REDIS=redis  # Hostname/IP of the Redis service (likely same container)
+    depends_on:
+      - redis  # Chatbot service depends on Redis being up first
+
+  redis:
+    image: redis  # Uses the official Redis image
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf  # Mounts your local redis.conf file for configuration
+    command: ["/usr/local/etc/redis/redis.conf"]  # Starts Redis with the mounted configuration file
+
