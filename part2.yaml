@@ -1,0 +1,11 @@
+version: '3.9.2'
+
+services:
+  chatbot:
+    image: comp7940-chatbot
+    environment:
+      - ACCESS_TOKEN_TG=6737539617:AAFaI44zwcaS6ehCh4RMJpB1hkBnHuRhj6Y
+      - ACCESS_TOKEN_CHATGPT=d0a9386d-0c18-46a5-8250-1e39d440dd13
+      - PASSWORD_REDIS=KdwZNCmUlTh4EaKslNFoEwtF58SS1XuR
+      - PORT_REDIS=14084
+      - HOST_REDIS=redis-14084.c53.west-us.azure.cloud.redislabs.com
