@@ -12,7 +12,6 @@ class HKBU_ChatGPT:
             self.config = config_path
         else:
             raise ValueError("config_path must be a string or ConfigParser object")
-
     def submit(self, message):
         conversation = [{"role": "user", "content": message}]
         url = (self.config['CHATGPT']['BASICURL'] +
@@ -21,8 +20,8 @@ class HKBU_ChatGPT:
                self.config['CHATGPT']['APIVERSION'])
         headers = {
             'Content-Type': 'application/json',
+            'api-key': os.environ['ACCESS_TOKEN_CHATGPT'],
             # 'api-key': self.config['CHATGPT']['ACCESS_TOKEN']
-            'api-key': os.environ['ACCESS_TOKEN_CHATGPT']
         }
         payload = {'messages': conversation}
         response = requests.post(url, json=payload, headers=headers)
@@ -31,6 +30,24 @@ class HKBU_ChatGPT:
             return data['choices'][0]['message']['content']
         else:
             return f'Error: {response.status_code}, {response.text}'
+    # def submit_gpt3(self, message):
+    #     conversation = [{"role": "user", "content": message}]
+    #     url = (self.config['CHATGPT']['BASICURL'] +
+    #            "/deployments/" + self.config['CHATGPT']['MODELNAME3'] +
+    #            "/chat/completions/?api-version=" +
+    #            self.config['CHATGPT']['APIVERSION'])
+    #     headers = {
+    #         'Content-Type': 'application/json',
+    #         # 'api-key': self.config['CHATGPT']['ACCESS_TOKEN']
+    #         'api-key': os.environ['ACCESS_TOKEN_CHATGPT']
+    #     }
+    #     payload = {'messages': conversation}
+    #     response = requests.post(url, json=payload, headers=headers)
+    #     if response.status_code == 200:
+    #         data = response.json()
+    #         return data['choices'][0]['message']['content']
+    #     else:
+    #         return f'Error: {response.status_code}, {response.text}'
 
 if __name__ == '__main__':
     ChatGPT_test = HKBU_ChatGPT()
