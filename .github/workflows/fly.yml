@@ -1,4 +1,4 @@
-name: Fly Deploy
+name: Deploy to Heroku
 
 on:
   push:
@@ -7,12 +7,37 @@ on:
 
 jobs:
   deploy:
-    name: Deploy app
     runs-on: ubuntu-latest
-    concurrency: deploy-group
     steps:
       - uses: actions/checkout@v3
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only --ha=False --image registry.hub.docker.com/albertqxdong/chatbot-fly:latest -a chatbot-1
+      
+      - name: Login to Heroku Container Registry
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+
+      - name: Pull Docker Image from Docker Hub
+        run: docker pull albertqxdong/chatbot-heroku:latest
+
+      - name: Tag Docker Image for Heroku
+        run: docker tag albertqxdong/chatbot-heroku:latest registry.heroku.com/chatbot--1/worker
+
+      - name: Push Docker Image to Heroku Container Registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: docker push registry.heroku.com/chatbot--1/worker
+
+      - name: Release Docker Image to Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release web --app chatbot--1
+
+      - name: Scale down web Dynos to 0
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku ps:scale web=0 --a chatbot--1
+
+      - name: Scale up worker Dynos to 1
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku ps:scale worker=1 --a chatbot--1
