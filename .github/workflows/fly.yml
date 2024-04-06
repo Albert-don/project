@@ -35,9 +35,9 @@ jobs:
       - name: Scale down web Dynos to 0
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku ps:scale web=0 --a chatbot--1
+        run: heroku ps:scale web=0 -a chatbot--1
 
       - name: Scale up worker Dynos to 1
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku ps:scale worker=1 --a chatbot--1
+        run: heroku ps:scale worker=1 -a chatbot--1
